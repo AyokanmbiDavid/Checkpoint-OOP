@@ -4,20 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
-    <script src="file.js" defer></script>
+    <link rel="stylesheet" href="filre.css">
 </head>
 <body>
+    <h1>Product List</h1>
+    <div id="product-list"></div>
+
     <h1>Shopping Cart</h1>
-    <div>
-        <h2>Products</h2>
-        <button onclick="addItem(1, 'Apple', 0.5, 3)">Add 3 Apples</button>
-        <button onclick="addItem(2, 'Banana', 0.3, 5)">Add 5 Bananas</button>
-        <button onclick="addItem(3, 'Orange', 0.8, 2)">Add 2 Oranges</button>
-    </div>
-    <div>
-        <h2>Cart</h2>
-        <button onclick="removeItem(2)">Remove Bananas</button>
-        <div id="cart-items"></div>
-    </div>
+    <div id="cart"></div>
+
+    <script src="app.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// Create an object class for the product
+// Product class
 class Product {
     constructor(id, name, price) {
         this.id = id;
@@ -7,64 +7,88 @@ class Product {
     }
 }
 
-// Create an object class for the shopping cart item
+// ShoppingCartItem class
 class ShoppingCartItem {
     constructor(product, quantity) {
         this.product = product;
         this.quantity = quantity;
     }
 
-    // Method to calculate the total price of the item
-    totalPrice() {
+    getTotalPrice() {
         return this.product.price * this.quantity;
     }
 }
 
-// Create another object class for the shopping cart
+// ShoppingCart class
 class ShoppingCart {
     constructor() {
         this.items = [];
     }
 
-    // Method to get the total number of items inside the cart
-    totalItems() {
+    addItem(product) {
+        const existingItem = this.items.find(item => item.product.id === product.id);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            this.items.push(new ShoppingCartItem(product, 1));
+        }
+        this.displayCart();
+    }
+
+    removeItem(productId) {
+        const itemIndex = this.items.findIndex(item => item.product.id === productId);
+        if (itemIndex > -1) {
+            if (this.items[itemIndex].quantity > 1) {
+                this.items[itemIndex].quantity--;
+            } else {
+                this.items.splice(itemIndex, 1);
+            }
+        }
+        this.displayCart();
+    }
+
+    getTotalItems() {
         return this.items.reduce((total, item) => total + item.quantity, 0);
     }
 
-    // Method to add items to the cart
-    addItem(product, quantity) {
-        this.items.push(new ShoppingCartItem(product, quantity));
-        this.displayCart();
-    }
-
-    // Method to remove items from the cart
-    removeItem(productId) {
-        this.items = this.items.filter(item => item.product.id !== productId);
-        this.displayCart();
-    }
-
-    // Method to display cart items
     displayCart() {
-        const cartItemsDiv = document.getElementById('cart-items');
-        cartItemsDiv.innerHTML = '';
+        const cartElement = document.getElementById('cart');
+        cartElement.innerHTML = '';
+
+        if (this.items.length === 0) {
+            cartElement.innerHTML = '<p>The cart is empty.</p>';
+            return;
+        }
+
         this.items.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.textContent = `Product: ${item.product.name}, Quantity: ${item.quantity}, Total Price: ${item.totalPrice()}`;
-            cartItemsDiv.appendChild(itemDiv);
+            const itemElement = document.createElement('div');
+            itemElement.className = 'cart-item';
+            itemElement.innerHTML = `
+                <span>${item.product.name} (x${item.quantity}) - $${item.getTotalPrice().toFixed(2)}</span>
+                <button onclick="cart.removeItem(${item.product.id})">Remove</button>
+            `;
+            cartElement.appendChild(itemElement);
         });
     }
 }
 
-// Create a shopping cart instance
+// Initializing products and cart
+const products = [
+    new Product(1, 'Product A', 10.99),
+    new Product(2, 'Product B', 14.99),
+    new Product(3, 'Product C', 7.99)
+];
+
 const cart = new ShoppingCart();
 
-// Function to add items to the cart
-function addItem(id, name, price, quantity) {
-    const product = new Product(id, name, price);
-    cart.addItem(product, quantity);
-}
-
-// Function to remove items from the cart
-function removeItem(id) {
-    cart.removeItem(id);
-}
+// Display products
+const productListElement = document.getElementById('product-list');
+products.forEach(product => {
+    const productElement = document.createElement('div');
+    productElement.className = 'product';
+    productElement.innerHTML = `
+        <span>${product.name} - $${product.price.toFixed(2)}</span>
+        <button onclick="cart.addItem(products.find(p => p.id === ${product.id}))">Add to Cart</button>
+    `;
+    productListElement.appendChild(productElement);
+});
